@@ -2,40 +2,36 @@ package domain;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Random;
 
 public class Program {
     private static final int MAX_NAME_LENGTH = 5;
-    private static final int RANGE = 10;
-    private static final int MIN_FORWARD = 4;
+    private static final int LAST_COMMA_LOCATION = 2;
 
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     public static void main(String[] args) throws Exception {
-        String[] names;
+        String[] names = inputNames();
         int times;
         Car[] cars;
 
-        names = inputNames();
         if (!checkNameLength(names)) {
             System.out.println("이름은 5자 이하로 해주세요");
             return;
         }
-
-        cars = makeCars(names);
         times = inputTimes();
+        cars = makeCars(names);
 
-        System.out.println(" ");
         System.out.println("실행 결과");
 
         while (times != 0) {
             for (Car car : cars) {
-                moveCars(car, randomNumber());
+                car.moveCars();
                 car.printResult();
             }
             times--;
             System.out.println(" ");
         }
+        printWinner(cars, getMaxCarPosition(cars));
     }
 
     private static String[] inputNames() throws Exception {
@@ -57,10 +53,6 @@ public class Program {
         return true;
     }
 
-    private static int randomNumber() {
-        return new Random().nextInt(RANGE);
-    }
-
     private static Car[] makeCars(String[] names) {
         Car[] cars = new Car[names.length];
 
@@ -70,9 +62,25 @@ public class Program {
         return cars;
     }
 
-    private static void moveCars(Car car, int random) {
-        if (random >= MIN_FORWARD) {
-            car.forward();
+    private static int getMaxCarPosition(Car[] cars) {
+        int max = 0;
+        for (Car car : cars) {
+            if (car.getPosition() > max) {
+                max = car.getPosition();
+            }
         }
+        return max;
     }
+
+    private static void printWinner(Car[] cars, int max) {
+        StringBuilder winner = new StringBuilder();
+        for (Car car : cars) {
+            if (car.getPosition() == max) {
+                winner.append(car.getName()).append(", ");
+            }
+        }
+        winner.delete(winner.length() - LAST_COMMA_LOCATION, winner.length());
+        System.out.println(winner.append("가 최종 우승했습니다."));
+    }
+
 }
