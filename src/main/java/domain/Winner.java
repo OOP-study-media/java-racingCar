@@ -4,6 +4,7 @@ import java.util.List;
 
 class Winner {
     private static final int LAST_COMMA_LOCATION = 2;
+
     private List<Car> cars;
 
     Winner(List<Car> cars) {

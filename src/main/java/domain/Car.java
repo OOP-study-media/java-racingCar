@@ -5,22 +5,15 @@ import java.util.Random;
 class Car {
     private static final int RANGE = 10;
     private static final int MIN_FORWARD = 4;
+
     private final String name;
     private int position = 0;
 
-    Car(String name) {
+    public Car(String name) {
         this.name = name;
     }
 
-    String getName() {
-        return name;
-    }
-
-    int getPosition() {
-        return position;
-    }
-
-    void moveCars() {
+    public void moveCars() {
         if (randomNumber() >= MIN_FORWARD) {
             position++;
         }
@@ -30,13 +23,20 @@ class Car {
         return new Random().nextInt(RANGE);
     }
 
-    void printResult() {
+    public void printResult() {
         String result = name + ":" + "-".repeat(Math.max(0, position));
         System.out.println(result);
     }
 
-    boolean isMaxPosition(int max) {
+    public boolean isMaxPosition(int max) {
         return position == max;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getPosition() {
+        return position;
+    }
 }
