@@ -34,4 +34,9 @@ class Car {
         String result = name + ":" + "-".repeat(Math.max(0, position));
         System.out.println(result);
     }
+
+    boolean isMaxPosition(int max) {
+        return position == max;
+    }
+
 }

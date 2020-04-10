@@ -2,27 +2,26 @@ package domain;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Program {
     private static final int MAX_NAME_LENGTH = 5;
-    private static final int LAST_COMMA_LOCATION = 2;
-
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static String[] names;
+    private static int times;
 
     public static void main(String[] args) throws Exception {
-        String[] names = inputNames();
-        int times;
-        Car[] cars;
-
-        if (!checkNameLength(names)) {
-            System.out.println("이름은 5자 이하로 해주세요");
+        if (!setupNames() || !setupTimes()) {
             return;
         }
-        times = inputTimes();
-        cars = makeCars(names);
+        List<Car> cars = makeCars(names);
+        playGame(cars, times);
+        new Winner(cars).printWinner();
+    }
 
+    private static void playGame(List<Car> cars, int times) {
         System.out.println("실행 결과");
-
         while (times != 0) {
             for (Car car : cars) {
                 car.moveCars();
@@ -31,7 +30,20 @@ public class Program {
             times--;
             System.out.println(" ");
         }
-        printWinner(cars, getMaxCarPosition(cars));
+    }
+
+    private static boolean setupNames() throws Exception {
+        names = inputNames();
+        return checkNameLength(names);
+    }
+
+    private static boolean setupTimes() throws Exception {
+        String inputTimes = inputTimes();
+        if (!checkTimes(inputTimes)) {
+            return false;
+        }
+        times = Integer.parseInt(inputTimes);
+        return true;
     }
 
     private static String[] inputNames() throws Exception {
@@ -39,48 +51,41 @@ public class Program {
         return br.readLine().split(",");
     }
 
-    private static int inputTimes() throws Exception {
+    private static String inputTimes() throws Exception {
         System.out.println("시도할 회수는 몇회인가요?");
-        return Integer.parseInt(br.readLine());
+        return br.readLine();
     }
 
     private static boolean checkNameLength(String[] names) {
         for (String name : names) {
             if (name.length() > MAX_NAME_LENGTH) {
+                System.out.println("이름은 5자 이하로 해주세요");
+                return false;
+            }
+            if (name.length() == 0) {
+                System.out.println("이름은 1글자 이상이어야 합니다");
                 return false;
             }
         }
         return true;
     }
 
-    private static Car[] makeCars(String[] names) {
-        Car[] cars = new Car[names.length];
+    private static boolean checkTimes(String times) {
+        int value;
+        try {
+            value = Integer.parseInt(times);
+        } catch (Exception e) {
+            return false;
+        }
+        return value >= 0;
+    }
 
-        for (int i = 0; i < names.length; i++) {
-            cars[i] = new Car(names[i]);
+    private static List<Car> makeCars(String[] names) {
+        List<Car> cars = new ArrayList<>();
+
+        for (String name : names) {
+            cars.add(new Car(name));
         }
         return cars;
     }
-
-    private static int getMaxCarPosition(Car[] cars) {
-        int max = 0;
-        for (Car car : cars) {
-            if (car.getPosition() > max) {
-                max = car.getPosition();
-            }
-        }
-        return max;
-    }
-
-    private static void printWinner(Car[] cars, int max) {
-        StringBuilder winner = new StringBuilder();
-        for (Car car : cars) {
-            if (car.getPosition() == max) {
-                winner.append(car.getName()).append(", ");
-            }
-        }
-        winner.delete(winner.length() - LAST_COMMA_LOCATION, winner.length());
-        System.out.println(winner.append("가 최종 우승했습니다."));
-    }
-
 }
